@@ -1,0 +1,197 @@
+package vista;
+
+import controladores.ControladorLaboratorio;
+import controladores.ControladorReserva;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import modelo.Estado;
+import modelo.Laboratorio;
+import modelo.NumRol;
+import modelo.Usuario;
+
+/**
+ *
+ * @author JOAN
+ */
+public class VentanaLaboratorio extends javax.swing.JFrame implements ActionListener {
+    
+    private ControladorLaboratorio controlador;
+    JButton[][] botones;
+    Usuario usuario;
+    
+    public VentanaLaboratorio(Usuario usuario) {
+        initComponents();
+        setLocationRelativeTo(this);
+        this.botones = Laboratorios();
+        this.usuario = usuario;
+        this.controlador = new ControladorLaboratorio();
+        cargarBotones();
+        validarPosiciones();
+    }
+    
+    private JButton[][] Laboratorios() {
+        JButton[][] botones = new JButton[3][];
+        botones[0] = new JButton[5];
+        botones[1] = new JButton[1];
+        botones[2] = new JButton[5];
+        return botones;
+    }
+    
+    public void cargarBotones() {
+        int ancho = 80;
+        int alto = 75;
+        int separado = 50;
+        int texto = 405;
+        int texto2 = 405;
+        for (int i = 0; i < botones.length; i++) {
+            for (int j = 0; j < botones[i].length; j++) {
+                botones[i][j] = new JButton();
+                if (i == 0) {
+                    botones[i][j].setBounds(
+                            j * ancho + separado,
+                            i * alto + separado,
+                            ancho, alto);
+                    botones[i][j].setText(String.valueOf(texto));
+                    texto--;
+                }
+                if (i == 1) {
+                    if (j < 1) {
+                        botones[i][j].setBounds(
+                                j * ancho + separado,
+                                i * alto + separado,
+                                ancho, alto);
+                        texto2++;
+                        botones[i][j].setText(String.valueOf(texto2));
+                    }
+                }
+                if (i == 2) {
+                    botones[i][j].setBounds(
+                            j * ancho + separado,
+                            i * alto + separado,
+                            ancho, alto);
+                    texto2++;
+                    botones[i][j].setText(String.valueOf(texto2));
+                }
+                botones[i][j].addActionListener(this);
+                panelLaboratorio.add(botones[i][j]);
+            }
+        }
+    }
+    
+    public void actionPerformed(ActionEvent ae) {
+        for (int i = 0; i < botones.length; i++) {
+            for (int j = 0; j < botones[i].length; j++) {
+                if (ae.getSource().equals(botones[i][j])) {
+                    Laboratorio laboratorio = controlador.obtenerLaboratorio(i, j);
+                    if (laboratorio.getEstado().equals(Estado.DISPONIBLE)) {
+                        VentanaSalon ventana = new VentanaSalon(laboratorio, usuario);
+                        ventana.setVisible(true);
+                        this.dispose();
+                    } else if (laboratorio.getEstado().equals(Estado.MANTENIMIENTO)) {
+                        Object[] options = {"Reserva"};
+                        String descripcionMantenimiento = controlador.descripcionMantenimiento(laboratorio);
+                        int paso = JOptionPane.showOptionDialog(null, descripcionMantenimiento,
+                                "Mantenimiento de Laboratorio", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                        if (paso == JOptionPane.YES_OPTION) {
+                            VentanaSalon ventana = new VentanaSalon(laboratorio, usuario);
+                            ventana.setVisible(true);
+                            this.dispose();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void validarPosiciones() {
+        for (int i = 0; i < botones.length; i++) {
+            for (int j = 0; j < botones[i].length; j++) {
+                Laboratorio laboratorio = controlador.obtenerLaboratorio(i, j);
+                if (laboratorio.getEstado().equals(Estado.DISPONIBLE)) {
+                    botones[i][j].setBackground(Color.WHITE);
+                } else if (laboratorio.getEstado().equals(Estado.MANTENIMIENTO)) {
+                    botones[i][j].setBackground(Color.GRAY);
+                } else if (laboratorio.getEstado().equals(Estado.OCUPADO)) {
+                    botones[i][j].setBackground(Color.RED);
+                }
+            }
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        panelLaboratorio = new javax.swing.JPanel();
+        btnAtras1 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        panelLaboratorio.setBackground(new java.awt.Color(204, 204, 204));
+        panelLaboratorio.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "LABORATORIOS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14), new java.awt.Color(0, 0, 0))); // NOI18N
+
+        btnAtras1.setBackground(new java.awt.Color(204, 204, 204));
+        btnAtras1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Atras.png"))); // NOI18N
+        btnAtras1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtras1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelLaboratorioLayout = new javax.swing.GroupLayout(panelLaboratorio);
+        panelLaboratorio.setLayout(panelLaboratorioLayout);
+        panelLaboratorioLayout.setHorizontalGroup(
+            panelLaboratorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelLaboratorioLayout.createSequentialGroup()
+                .addComponent(btnAtras1)
+                .addGap(0, 387, Short.MAX_VALUE))
+        );
+        panelLaboratorioLayout.setVerticalGroup(
+            panelLaboratorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(panelLaboratorioLayout.createSequentialGroup()
+                .addGap(0, 308, Short.MAX_VALUE)
+                .addComponent(btnAtras1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panelLaboratorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panelLaboratorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAtras1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtras1ActionPerformed
+        if (usuario.getRol().equals(NumRol.ADMINLABORATIRIO)) {
+            VentanaLogin ventana = new VentanaLogin();
+            ventana.setVisible(true);
+            ventana.setLocationRelativeTo(this);
+            this.dispose();
+        } else if (usuario.getRol().equals(NumRol.ESTUDIANTE)) {
+            VentanaEstudiante ventana = new VentanaEstudiante(usuario);
+            ventana.setVisible(true);
+            ventana.setLocationRelativeTo(this);
+            this.dispose();
+        }
+    }//GEN-LAST:event_btnAtras1ActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAtras1;
+    private javax.swing.JPanel panelLaboratorio;
+    // End of variables declaration//GEN-END:variables
+}
